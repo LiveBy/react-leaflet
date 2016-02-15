@@ -1,4 +1,4 @@
-import { tileLayer } from 'leaflet';
+import { tileLayer } from 'leaflet-headless';
 
 import BaseTileLayer from './BaseTileLayer';
 

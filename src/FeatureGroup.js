@@ -1,4 +1,4 @@
-import { featureGroup } from 'leaflet';
+import { featureGroup } from 'leaflet-headless';
 
 import Path from './Path';
 

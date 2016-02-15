@@ -1,5 +1,5 @@
 import { PropTypes } from 'react';
-import { geoJson } from 'leaflet';
+import { geoJson } from 'leaflet-headless';
 
 import Path from './Path';
 

@@ -1,4 +1,4 @@
-import { rectangle } from 'leaflet';
+import { rectangle } from 'leaflet-headless';
 
 import boundsType from './types/bounds';
 import Path from './Path';

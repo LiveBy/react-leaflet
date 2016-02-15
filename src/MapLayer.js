@@ -1,6 +1,6 @@
 import assign from 'lodash/assign';
 import React, { PropTypes } from 'react';
-import { Map } from 'leaflet';
+import { Map } from 'leaflet-headless';
 
 import MapComponent from './MapComponent';
 

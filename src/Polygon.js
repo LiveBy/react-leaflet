@@ -1,5 +1,5 @@
 import { PropTypes } from 'react';
-import { polygon } from 'leaflet';
+import { polygon } from 'leaflet-headless';
 
 import latlngListType from './types/latlngList';
 import Path from './Path';

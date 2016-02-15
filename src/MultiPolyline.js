@@ -1,5 +1,5 @@
 import { PropTypes } from 'react';
-import { multiPolyline } from 'leaflet';
+import { multiPolyline } from 'leaflet-headless';
 
 import latlngListType from './types/latlngList';
 import Path from './Path';

@@ -1,5 +1,5 @@
 import { PropTypes } from 'react';
-import { circle } from 'leaflet';
+import { circle } from 'leaflet-headless';
 
 import latlngType from './types/latlng';
 import Path from './Path';

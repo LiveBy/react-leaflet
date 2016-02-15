@@ -1,4 +1,4 @@
-import { layerGroup } from 'leaflet';
+import { layerGroup } from 'leaflet-headless';
 
 import MapLayer from './MapLayer';
 

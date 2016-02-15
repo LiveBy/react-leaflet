@@ -1,5 +1,5 @@
 import { PropTypes } from 'react';
-import { Icon, marker } from 'leaflet';
+import { Icon, marker } from 'leaflet-headless';
 
 import latlngType from './types/latlng';
 import MapLayer from './MapLayer';

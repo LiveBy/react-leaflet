@@ -1,5 +1,5 @@
 import { PropTypes } from 'react';
-import { circleMarker } from 'leaflet';
+import { circleMarker } from 'leaflet-headless';
 
 import latlngType from './types/latlng';
 import Path from './Path';

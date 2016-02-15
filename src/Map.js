@@ -4,7 +4,7 @@ import isArray from 'lodash/isArray';
 import isUndefined from 'lodash/isUndefined';
 import uniqueId from 'lodash/uniqueId';
 import React, { PropTypes } from 'react';
-import Leaflet from 'leaflet';
+import Leaflet from 'leaflet-headless';
 
 import boundsType from './types/bounds';
 import latlngType from './types/latlng';

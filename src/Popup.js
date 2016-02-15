@@ -1,6 +1,6 @@
 import { Children, PropTypes } from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
-import { Map, popup } from 'leaflet';
+import { Map, popup } from 'leaflet-headless';
 
 import latlngType from './types/latlng';
 import MapComponent from './MapComponent';
