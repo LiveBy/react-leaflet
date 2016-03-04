@@ -22,7 +22,7 @@ const OPTIONS = [
 
 export default class Path extends MapLayer {
   getPathOptions(props) {
-    return pick(props, OPTIONS);
+    return pick(props.style, OPTIONS);
   }
 
   setStyle(options = {}) {
