@@ -17,7 +17,7 @@ export default class Popup extends MapComponent {
     super.componentWillMount();
     const { children, map, popupContainer, ...props } = this.props;
 
-    this.leafletElement = popup(props, popupContainer || map);
+    this.leafletElement = popup(props, popupContainer);
     this.leafletElement.on('open', ::this.renderPopupContent);
     this.leafletElement.on('close', ::this.removePopupContent);
   }
