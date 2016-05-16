@@ -1,5 +1,5 @@
 import { PropTypes } from 'react';
-import { imageOverlay, Map } from 'leaflet-headless';
+import { imageOverlay } from 'leaflet-headless';
 
 import boundsType from './types/bounds';
 import MapLayer from './MapLayer';

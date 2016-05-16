@@ -1,5 +1,5 @@
-import { control, Map } from 'leaflet';
-import { control } from 'leaflet-headless';
+import { control, Map } from 'leaflet-headless';
+import { assign } from 'lodash';
 import React, { cloneElement, Children, Component, PropTypes } from 'react';
 import warning from 'warning';
 
