@@ -54,7 +54,7 @@ export default class Popup extends MapComponent {
   componentWillUnmount() {
     super.componentWillUnmount();
     this.removePopupContent();
-    if(this.isOpen()){
+    if(this.leafletElement._map !== null){
       this.props.map.removeLayer(this.leafletElement);
     }
   }
