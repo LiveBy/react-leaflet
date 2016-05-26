@@ -1,15 +1,13 @@
-/* global describe, expect, it, jest */
-
 import Leaflet from 'leaflet';
-import React, { Component } from 'react';
-import { renderIntoDocument } from 'react-addons-test-utils';
+import React from 'react';
+import { render } from 'react-dom';
 
-import MapComponent from '../src/MapComponent';
+jest.dontMock('../src/MapComponent');
 
-jest.unmock('../src/MapComponent');
+const MapComponent = require('../src/MapComponent').default;
 
 describe('MapComponent', () => {
-  class TestComponent extends MapComponent {
+  class Component extends MapComponent {
     componentWillMount() {
       super.componentWillMount();
       this.leafletElement = Leaflet.map('test');
@@ -20,21 +18,42 @@ describe('MapComponent', () => {
   }
 
   it('exposes a `leafletElement` getter', () => {
-    const component = renderIntoDocument(<TestComponent />);
-    expect(component.leafletElement._container).toBeDefined();
+    document.body.innerHTML = '<div id="test"></div>';
+
+    const component = <Component />;
+    const instance = render(component, document.getElementById('test'));
+
+    expect(instance.leafletElement._container).toBeDefined();
   });
 
   it('binds the event', () => {
+    document.body.innerHTML = '<div id="test"></div>';
+
     const callback = jest.genMockFn();
-    const component = renderIntoDocument(<TestComponent onClick={callback} />);
-    component.fireLeafletEvent('click');
+    const component = <Component onClick={callback} />;
+    const instance = render(component, document.getElementById('test'));
+
+    instance.fireLeafletEvent('click');
+    expect(callback.mock.calls.length).toBe(1);
+  });
+
+  it('binds events as Leaflet events', () => {
+    document.body.innerHTML = '<div id="test"></div>';
+
+    const callback = jest.genMockFn();
+    const component = <Component onClick={callback} />;
+    const instance = render(component, document.getElementById('test'));
+
+    instance.fireLeafletEvent('click');
     expect(callback.mock.calls.length).toBe(1);
   });
 
   it('unbinds the event', () => {
+    document.body.innerHTML = '<div id="test"></div>';
+
     const callback = jest.genMockFn();
 
-    class EventComponent extends Component {
+    class TestComponent extends React.Component {
       constructor() {
         super();
         this.state = {bindEvent: true};
@@ -50,26 +69,29 @@ describe('MapComponent', () => {
 
       render() {
         return this.state.bindEvent
-          ? <TestComponent onClick={callback} ref='c' />
-          : <TestComponent ref='c' />;
+          ? <Component onClick={callback} ref='c' />
+          : <Component ref='c' />;
       }
     }
 
-    const component = renderIntoDocument(<EventComponent />);
+    const component = <TestComponent />;
+    const instance = render(component, document.getElementById('test'));
 
-    component.fire();
+    instance.fire();
     expect(callback.mock.calls.length).toBe(1);
 
-    component.dontBind();
-    component.fire();
+    instance.dontBind();
+    instance.fire();
     expect(callback.mock.calls.length).toBe(1);
   });
 
   it('replaces the event', () => {
+    document.body.innerHTML = '<div id="test"></div>';
+
     const callback1 = jest.genMockFn();
     const callback2 = jest.genMockFn();
 
-    class EventComponent extends Component {
+    class TestComponent extends React.Component {
       constructor() {
         super();
         this.state = {cb: callback1};
@@ -84,18 +106,19 @@ describe('MapComponent', () => {
       }
 
       render() {
-        return <TestComponent onClick={this.state.cb} ref='c' />;
+        return <Component onClick={this.state.cb} ref='c' />;
       }
     }
 
-    const component = renderIntoDocument(<EventComponent />);
+    const component = <TestComponent />;
+    const instance = render(component, document.getElementById('test'));
 
-    component.fire();
+    instance.fire();
     expect(callback1.mock.calls.length).toBe(1);
     expect(callback2.mock.calls.length).toBe(0);
 
-    component.replaceCallback();
-    component.fire();
+    instance.replaceCallback();
+    instance.fire();
     expect(callback1.mock.calls.length).toBe(1);
     expect(callback2.mock.calls.length).toBe(1);
   });

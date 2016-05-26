@@ -1,11 +1,10 @@
 /* eslint-disable react/no-did-mount-set-state */
 
-import { isArray, isUndefined, omit, uniqueId } from 'lodash';
+import { isArray, isUndefined, uniqueId } from 'lodash';
 import React, { PropTypes } from 'react';
 import Leaflet from 'leaflet-headless';
 
 import boundsType from './types/bounds';
-import childrenType from './types/children';
 import latlngType from './types/latlng';
 
 import MapComponent from './MapComponent';
@@ -18,7 +17,10 @@ export default class Map extends MapComponent {
     bounds: boundsType,
     boundsOptions: PropTypes.object,
     center: latlngType,
-    children: childrenType,
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.node),
+      PropTypes.node,
+    ]),
     className: PropTypes.string,
     id: PropTypes.string,
     maxBounds: boundsType,
@@ -40,12 +42,11 @@ export default class Map extends MapComponent {
   }
 
   componentDidMount() {
-    const props = omit(this.props, ['children', 'className', 'id', 'style']);
-    this.leafletElement = Leaflet.map(this.state.id, props);
+    this.leafletElement = Leaflet.map(this.state.id, this.props);
     super.componentDidMount();
     this.setState({map: this.leafletElement});
-    if (!isUndefined(props.bounds)) {
-      this.leafletElement.fitBounds(props.bounds, props.boundsOptions);
+    if (!isUndefined(this.props.bounds)) {
+      this.leafletElement.fitBounds(this.props.bounds, this.props.boundsOptions);
     }
   }
 

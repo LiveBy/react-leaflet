@@ -1,36 +1,47 @@
-/* global describe, expect, it, jest */
-
-import React, { Component } from 'react';
-import { renderIntoDocument } from 'react-addons-test-utils';
+import React from 'react';
+import { findDOMNode, render } from 'react-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import Map from '../src/Map';
+jest.dontMock('../src/Map');
+jest.dontMock('../src/MapComponent');
+jest.dontMock('../src/types/bounds');
+jest.dontMock('../src/types/index');
+jest.dontMock('../src/types/latlng');
 
-jest.unmock('../src/Map');
-jest.unmock('../src/MapComponent');
-jest.unmock('../src/types/bounds');
-jest.unmock('../src/types/index');
-jest.unmock('../src/types/latlng');
+const Map = require('../src/Map').default;
 
 describe('Map', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '<div id="test"></div>';
+  });
+
   it('only renders the container div server-side', () => {
-    class TestComponent extends Component {
+    class Component extends React.Component {
       render() {
         return <span>test</span>;
       }
     }
-    const component = <Map><TestComponent /></Map>;
-    const html = renderToStaticMarkup(component);
+    const component = <Map><Component /></Map>;
+    const html = renderToStaticMarkup(component, document.getElementById('test'));
 
     expect(html).toBe('<div id="map1"></div>');
+  });
+
+  it('initializes the map in the rendered container', () => {
+    const component = <Map />;
+    const instance = render(component, document.getElementById('test'));
+    const node = findDOMNode(instance);
+
+    expect(node._leaflet).toBe(true);
   });
 
   it('sets center and zoom props', () => {
     const center = [1.2, 3.4];
     const zoom = 10;
 
-    const map = renderIntoDocument(<Map center={center} zoom={zoom} />);
-    const mapLeaflet = map.leafletElement;
+    const component = <Map center={center} zoom={zoom} />;
+    const instance = render(component, document.getElementById('test'));
+    const mapLeaflet = instance.leafletElement;
 
     expect(mapLeaflet.getCenter().lat).toBe(center[0]);
     expect(mapLeaflet.getCenter().lng).toBe(center[1]);
@@ -39,13 +50,16 @@ describe('Map', () => {
 
   it('sets bounds', () => {
     const bounds = [[0, 0], [2, 2]];
-    const map = renderIntoDocument(<Map bounds={bounds} />)
-    const mapBounds = map.leafletElement.getBounds();
-    expect(mapBounds).toBe(bounds);
+    const component = <Map bounds={bounds} />;
+    const instance = render(component, document.getElementById('test'));
+    const mapLeaflet = instance.leafletElement;
+
+    expect(mapLeaflet.getCenter().lat).toBeCloseTo(1);
+    expect(mapLeaflet.getCenter().lng).toBeCloseTo(1);
   });
 
   it('updates center and zoom props', () => {
-    class TestComponent extends Component {
+    class Component extends React.Component {
       constructor() {
         super();
         this.state = {
@@ -66,29 +80,25 @@ describe('Map', () => {
         return <Map center={this.state.center} ref='map' zoom={this.state.zoom} />;
       }
     }
-
-    const component = renderIntoDocument(<TestComponent />);
-    const mapLeaflet = component.getLeafletMap();
+    const instance = render(<Component />, document.getElementById('test'));
+    const mapLeaflet = instance.getLeafletMap();
 
     expect(mapLeaflet.getCenter().lat).toBe(1.2);
     expect(mapLeaflet.getCenter().lng).toBe(3.4);
     expect(mapLeaflet.getZoom()).toBe(10);
 
-    component.updatePosition();
+    instance.updatePosition();
     expect(mapLeaflet.getCenter().lat).toBe(2.3);
     expect(mapLeaflet.getCenter().lng).toBe(4.5);
     expect(mapLeaflet.getZoom()).toBe(12);
   });
 
   it('updates bounds props', () => {
-    const firstBounds = [[0, 0], [2, 2]];
-    const secondBounds = [[0, 0], [-2, -2]]
-
-    class TestComponent extends Component {
+    class Component extends React.Component {
       constructor() {
         super();
         this.state = {
-          bounds: firstBounds,
+          bounds: [[0, 0], [2, 2]],
         };
       }
       getLeafletMap() {
@@ -96,19 +106,22 @@ describe('Map', () => {
       }
       updatePosition() {
         this.setState({
-          bounds: secondBounds,
+          bounds: [[0, 0], [-2, -2]],
         });
       }
       render() {
         return <Map bounds={this.state.bounds} ref='map' />;
       }
     }
+    const instance = render(<Component />, document.getElementById('test'));
+    const mapLeaflet = instance.getLeafletMap();
 
-    const component = renderIntoDocument(<TestComponent />);
-    const mapLeaflet = component.getLeafletMap();
+    expect(mapLeaflet.getCenter().lat).toBeCloseTo(1);
+    expect(mapLeaflet.getCenter().lng).toBeCloseTo(1);
 
-    expect(mapLeaflet.getBounds()).toBe(firstBounds);
-    component.updatePosition();
-    expect(mapLeaflet.getBounds()).toBe(secondBounds);
+    instance.updatePosition();
+    expect(mapLeaflet.getCenter().lat).toBeCloseTo(-1);
+    expect(mapLeaflet.getCenter().lng).toBeCloseTo(-1);
   });
+
 });
